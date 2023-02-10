@@ -1,0 +1,18 @@
+.container {
+    display: flex;
+}
+
+.card {
+    width: 200%;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+h1 {
+    font-weight: 600;
+    font-size: 2em;
+}

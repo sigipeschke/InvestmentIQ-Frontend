@@ -1,0 +1,482 @@
+<div class="container" id="main-container">
+    <div class="hero">
+        <div>
+            <h1 style="display: inline-block;">Invested: {{invested | currency}}</h1>
+            <h1 *ngIf="value>invested" style="display: inline-block; margin-left: 25px;">Portfolio Value: <span style="color: green;">{{value | currency}}</span></h1>
+            <h1 *ngIf="value<invested" style="display: inline-block; margin-left: 25px;">Portfolio Value: <span style="color: red;">{{value | currency}}</span><span style="color: red; font-size: 75%; margin-left: 10px;">{{profit | currency}}</span></h1>
+        </div>
+
+        <div class="dropdown">
+            <img src="assets/settings-icon.svg">
+            <div class="dropdown-content">
+                <div class="dropdown-content-item">
+                    <h3>Symbol</h3> <p-inputSwitch [(ngModel)]="columnsFilter['symbol']"></p-inputSwitch>
+                </div>
+                <div class="dropdown-content-item">
+                    <h3>Name</h3> <p-inputSwitch [(ngModel)]="columnsFilter['name']"></p-inputSwitch>
+                </div>
+                <div class="dropdown-content-item">
+                    <h3>Owned Shares</h3> <p-inputSwitch [(ngModel)]="columnsFilter['ownedShares']"></p-inputSwitch>
+                </div>
+                <div class="dropdown-content-item">
+                    <h3>Owned Value</h3> <p-inputSwitch [(ngModel)]="columnsFilter['ownedValue']"></p-inputSwitch>
+                </div>
+                <div class="dropdown-content-item">
+                    <h3>Net Return</h3> <p-inputSwitch [(ngModel)]="columnsFilter['profit']"></p-inputSwitch>
+                </div>
+                <div class="dropdown-content-item">
+                    <h3>Net Return %</h3> <p-inputSwitch [(ngModel)]="columnsFilter['profitInPercent']"></p-inputSwitch>
+                </div>
+                <div class="dropdown-content-item">
+                    <h3>Current Price</h3> <p-inputSwitch [(ngModel)]="columnsFilter['price']"></p-inputSwitch>
+                </div>
+                <div class="dropdown-content-item">
+                    <h3>Day % Chng</h3> <p-inputSwitch [(ngModel)]="columnsFilter['changeInPercent']"></p-inputSwitch>
+                </div>
+                <div class="dropdown-content-item">
+                    <h3>50 D % Chng</h3> <p-inputSwitch [(ngModel)]="columnsFilter['avgChange50InPercent']"></p-inputSwitch>
+                </div>
+                <div class="dropdown-content-item">
+                    <h3>200 D % Chng</h3> <p-inputSwitch [(ngModel)]="columnsFilter['avgChange200InPercent']"></p-inputSwitch>
+                </div>
+                <div class="dropdown-content-item">
+                    <h3>Year L % Chng</h3> <p-inputSwitch [(ngModel)]="columnsFilter['changeYearLowInPercent']"></p-inputSwitch>
+                </div>
+                <div class="dropdown-content-item">
+                    <h3>Year Div Yield</h3> <p-inputSwitch [(ngModel)]="columnsFilter['dividendAnnualYieldPercent']"></p-inputSwitch>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <p-table #dt class="portfolio-table" [value]="stocks" dataKey="id" sortField="name" rowGroupMode="subheader" groupRowsBy="mode"
+                [rowHover]="true" [rows]="10" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]" [loading]="loading"
+                [scrollable]="true" scrollDirection="both" [paginator]="false" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} stocks" [filterDelay]="0">
+            <ng-template pTemplate="caption">
+                <div class="table-header">
+                    <h2>My Portfolio</h2>
+                    <!--<span class="p-input-icon-left">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" [(ngModel)]="stockFilter" placeholder="Global Search" />
+                    </span>-->
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="min-width: 60px; max-width: 60px;"><a class="add-stock" (click)="onOpenModal('add')"><img src="../../../assets/add_box.svg" style="margin-left: 5px; width: 30px;"></a></th>
+                    <th style="min-width: 125px; max-width: 125px;" pSortableColumn="ticker" *ngIf="columnsFilter['symbol'] === true">Symbol <p-sortIcon field="symbol"></p-sortIcon></th>
+                    <th style="min-width: 225px; max-width: 225px;" pSortableColumn="name" *ngIf="columnsFilter['name'] === true">Name <p-sortIcon field="name"></p-sortIcon></th>
+                    <th style="min-width: 170px; max-width: 170px;" pSortableColumn="ownedShares" *ngIf="columnsFilter['ownedShares'] === true">Owned Shares <p-sortIcon field="ownedShares"></p-sortIcon></th>
+                    <th style="min-width: 170px; max-width: 170px;" pSortableColumn="ownedValue" *ngIf="columnsFilter['ownedValue'] === true">Owned Value <p-sortIcon field="ownedValue"></p-sortIcon></th>
+                    <th style="min-width: 170px; max-width: 170px;" pSortableColumn="profit" *ngIf="columnsFilter['profit'] === true">Net Return <p-sortIcon field="profit"></p-sortIcon></th>
+                    <th style="min-width: 170px; max-width: 170px;" pSortableColumn="profitInPercent" *ngIf="columnsFilter['profitInPercent'] === true">Net Return % <p-sortIcon field="profitInPercent"></p-sortIcon></th>
+                    <th style="min-width: 170px; max-width: 170px;" pSortableColumn="price" *ngIf="columnsFilter['price'] === true">Current Price <p-sortIcon field="price"></p-sortIcon></th>
+                    <th style="min-width: 170px; max-width: 170px;" pSortableColumn="changeInPercent" *ngIf="columnsFilter['changeInPercent'] === true">Day % Chg <p-sortIcon field="changeInPercent"></p-sortIcon></th>
+                    <th style="min-width: 170px; max-width: 170px;" pSortableColumn="50DChangePercent" *ngIf="columnsFilter['avgChange50InPercent'] === true">50 Day Chg <p-sortIcon field="50DChangePercent"></p-sortIcon></th>
+                    <th style="min-width: 170px; max-width: 170px;" pSortableColumn="200DChangePercent" *ngIf="columnsFilter['avgChange200InPercent'] === true">200 Day Chg <p-sortIcon field="200DChangePercent"></p-sortIcon></th>
+                    <th style="min-width: 170px; max-width: 170px;" pSortableColumn="YearLowChangePercent" *ngIf="columnsFilter['changeYearLowInPercent'] === true">Year Low Chg <p-sortIcon field="YearLowChangePercent"></p-sortIcon></th>
+                    <th style="min-width: 170px; max-width: 170px;" pSortableColumn="DividendYearYield" *ngIf="columnsFilter['dividendAnnualYieldPercent'] === true">Year Low Chg <p-sortIcon field="DividendYearYield"></p-sortIcon></th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="groupheader" let-stock>
+                <tr pRowGroupHeader><td colspan="100"><h4>{{stock.mode}} Positions</h4></td></tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-stock>
+                <tr class="p-selectable-row">
+                    <td style="min-width: 50px; max-width: 50px;">
+                        <a (click)="onOpenModal('info', stock)" class="info-stock" data-placement="top" data-original-title="Info"><img src="../../../assets/info-icon.svg" style="margin-left: 5px; width: 30px;"></a>
+                    </td>
+                    <td *ngIf="columnsFilter['symbol'] === true" style="min-width: 125px; max-width: 125px;">
+                        <span class="p-column-title">Symbol</span>
+                        <img *ngIf="stock.investedValue<stock.ownedValue" src="assets/trending_up.svg" style="scale: 0.65;">
+                        <img *ngIf="stock.investedValue>stock.ownedValue" src="assets/trending_down.svg" style="scale: 0.65;">
+                        <img *ngIf="stock.investedValue===stock.ownedValue" src="assets/trending_flat.svg" style="scale: 0.65;">
+                        {{stock.ticker}}
+                    </td>
+                    <td *ngIf="columnsFilter['name'] === true" style="min-width: 225px; max-width: 225px;">
+                        <span class="p-column-title">Name</span>
+                        <a class="bold" href="{{stock?.url}}" target="_blank" style="text-decoration: none; cursor: pointer; color: blue;" onmouseover="this.style.color='blueviolet';" onmouseout="this.style.color='blue';">{{stock.name}}</a>
+                    </td>
+                    <td *ngIf="columnsFilter['ownedShares'] === true" style="min-width: 170px; max-width: 170px;">
+                        <span class="p-column-title">Owned Shares</span>
+                        {{stock.ownedShares | number: '1.1'}}
+                    </td>
+                    <td *ngIf="columnsFilter['ownedValue'] === true" style="min-width: 170px; max-width: 170px;">
+                        <span class="p-column-title">Owned Value</span>
+                        {{stock.ownedValue | currency}}
+                    </td>
+                    <td *ngIf="columnsFilter['profit'] === true" style="min-width: 170px; max-width: 170px;">
+                        <span class="p-column-title">Net Return</span>
+                        <div [ngClass]="{'positive': stock.profit >= 0, 'negative': stock.profit < 0}">
+                            {{stock.profit | currency}}
+                        </div>
+                    </td>
+                    <td *ngIf="columnsFilter['profitInPercent'] === true" style="min-width: 170px; max-width: 170px;">
+                        <span class="p-column-title">Net Return</span>
+                        <div [ngClass]="{'positive': stock.profit >= 0, 'negative': stock.profit < 0}">
+                            {{stock.profitInPercent | number: '1.2'}}%
+                        </div>
+                    </td>
+                    <td *ngIf="columnsFilter['price'] === true" style="min-width: 170px; max-width: 170px;">
+                        <span class="p-column-title">Current Price</span>
+                        {{stock.price | currency}}
+                    </td>
+                    <td *ngIf="columnsFilter['changeInPercent'] === true" style="min-width: 170px; max-width: 170px;">
+                        <span class="p-column-title">Day Chg</span>
+                        {{stock.changeInPercent | number: '1.2'}}%
+                    </td>
+                    <td *ngIf="columnsFilter['avgChange50InPercent'] === true" style="min-width: 170px; max-width: 170px;">
+                        <span class="p-column-title">50 Day Chg</span>
+                        {{stock.avgChange50InPercent | number: '1.2'}}%
+                    </td>
+                    <td *ngIf="columnsFilter['avgChange200InPercent'] === true" style="min-width: 170px; max-width: 170px;">
+                        <span class="p-column-title">200 Day Chg</span>
+                        {{stock.avgChange200InPercent | number: '1.2'}}%
+                    </td>
+                    <td *ngIf="columnsFilter['changeYearLowInPercent'] === true" style="min-width: 170px; max-width: 170px;">
+                        <span class="p-column-title">Year Low Chg</span>
+                        {{stock.changeYearLowInPercent | number: '1.2'}}%
+                    </td>
+                    <td *ngIf="columnsFilter['dividendAnnualYieldPercent'] === true" style="min-width: 170px; max-width: 170px;">
+                        <span class="p-column-title">Year Div Yield</span>
+                        {{stock.dividendAnnualYieldPercent | number: '1.2'}}%
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="8">No stocks found.</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+
+
+<!-- Info Modal -->
+
+
+<div class="modal fade" id="infoStockModal" tabindex="-1" role="dialog"
+aria-labelledby="stockInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="min-width: 615px; max-width: 650px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="stockInfoModalLabel">Stock {{infoStock?.ticker}}</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row" style="margin-top: 15px;">
+                    <div *ngIf="infoStock">
+                        <div class="card m-b-30">
+                            <div class="card-body row">
+                                <div class="card-title col-6" style="text-align: center;">
+                                    <h3><img *ngIf="infoStock.investedValue<infoStock.ownedValue" src="assets/trending_up.svg" style="margin-left: 5px; scale: 0.65;"><img *ngIf="infoStock.investedValue>infoStock.ownedValue" src="assets/trending_down.svg" style="scale: 0.65;">
+                                        <a href="{{infoStock.url}}" target="_blank" style="text-decoration: none; cursor: pointer; color: blue;" onmouseover="this.style.color='blueviolet';" onmouseout="this.style.color='blue';">
+                                        {{infoStock.name}} 
+                                    </a></h3>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">Stock Exchange: {{infoStock.stockExchange}}</li>
+                                        <li class="list-group-item"></li>
+                                    </ul>
+                                </div>
+                                <div class="card-title col-6" style="text-align: left;">
+                                    <h3 style="display: inline-block; margin-right: 8px;">{{infoStock.price}}$</h3>
+                                    <h5 *ngIf="infoStock.change>0" style="display: inline-block; color: green;">{{infoStock.change}}   {{infoStock.changeInPercent}}%</h5>
+                                    <h5 *ngIf="infoStock.change<0" style="display: inline-block; color: red;">{{infoStock.change}}   {{infoStock.changeInPercent}}%</h5>
+                                    <ng-container *ngIf="infoStock.ownedShares > 0">
+                                        <p>Net Return: <span style="font-weight: 500; font-size: 1.2em;">{{infoStock.profit | currency}}</span>  {{infoStock.profitInPercent | number: '1.2'}}%</p>
+                                        <p>Investment Cost: {{infoStock.investedValue | currency}}</p>
+                                        <p>Owned Value: <span style="font-weight: 500; font-size: 1.2em;">{{infoStock.ownedValue | currency}}</span></p>
+                                        <p>Owned Shares: {{infoStock.ownedShares | number: '1.1'}}</p>
+                                    </ng-container>
+                                    <ng-container *ngIf="infoStock.ownedShares <= 0">
+                                        <p>Profit: {{infoStock.investedValue | profitPipe | currency}}</p>
+                                    </ng-container>
+                                    
+                                </div>
+
+                                <div class="stock-info" style="margin-bottom: 10px;">
+                                    <table class="table table-striped table-bordered table-responsive table-hover-cells" style="margin-bottom: 50px; width: 100%;">
+                                        <thead>
+                                            <tr style="text-align: center;">
+                                                <th scope="col" style="min-width: 60px;">Day Chng</th>
+                                                <th scope="col" style="min-width: 60px;">Day % Chng</th>
+                                                <th scope="col" style="min-width: 60px;">Day Open</th>
+                                                <th scope="col" style="min-width: 60px;">Previous Close</th>
+                                                <th scope="col" style="min-width: 60px;">Current Bid</th>
+                                                <th scope="col" style="min-width: 60px;">Current Ask</th>
+                                                <th scope="col" style="min-width: 60px;">Day High</th>
+                                                <th scope="col" style="min-width: 60px;">Day Low</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-primary table-group-divider">
+                                            <tr>
+                                                <td>{{infoStock.change | currency}}</td>
+                                                <td>{{infoStock.changeInPercent | number: '1.2'}}</td>
+                                                <td>{{infoStock.open | currency}}</td>
+                                                <td>{{infoStock.previousClose | currency}}</td>
+                                                <td>{{infoStock.bid | currency}}</td>
+                                                <td>{{infoStock.ask | currency}}</td>
+                                                <td>{{infoStock.dayHigh | currency}}</td>
+                                                <td>{{infoStock.dayLow | currency}}</td>
+                                        </tbody>
+
+                                        <thead>
+                                            <tr style="text-align: center;">
+                                                <th scope="col" style="min-width: 60px;">Avg Price (50 D)</th>
+                                                <th scope="col" style="min-width: 60px;">Avg Change (50 D)</th>
+                                                <th scope="col" style="min-width: 60px;">Avg % Change (50 D)</th>
+                                                <th scope="col" style="min-width: 60px;">Avg Price (200 D)</th>
+                                                <th scope="col" style="min-width: 60px;">Avg Change (200 D)</th>
+                                                <th scope="col" style="min-width: 60px;">Avg % Change (200 D)</th>
+                                                <th scope="col" style="min-width: 60px;">Annual Dividend Yield</th>
+                                                <th scope="col" style="min-width: 60px;">Annual Dividend Yield %</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-primary table-group-divider">
+                                            <tr>
+                                                <td>{{infoStock.avg50Price | currency}}</td>
+                                                <td>{{infoStock.avgChange50 | currency}}</td>
+                                                <td>{{infoStock.avgChange50InPercent | number: '1.2'}}</td>
+                                                <td>{{infoStock.avg200Price | currency}}</td>
+                                                <td>{{infoStock.avgChange200 | currency}}</td>
+                                                <td>{{infoStock.avgChange200InPercent | number: '1.2'}}</td>
+                                                <td>{{infoStock.dividendAnnualYield | currency}}</td>
+                                                <td>{{infoStock.dividendAnnualYieldPercent | number: '1.2'}}</td>
+                                            </tr>
+                                        </tbody>
+
+                                        <thead>
+                                            <tr style="text-align: center;">
+                                                <th scope="col" style="min-width: 60px;">Year High</th>
+                                                <th scope="col" style="min-width: 60px;">Year High Chng</th>
+                                                <th scope="col" style="min-width: 60px;">Year High Chng %</th>
+                                                <th scope="col" style="min-width: 60px;">Year Low</th>
+                                                <th scope="col" style="min-width: 60px;">Year Low Chng</th>
+                                                <th scope="col" style="min-width: 60px;">Year Low Chng %</th>
+                                                <th scope="col" style="min-width: 60px;">Volume</th>
+                                                <th scope="col" style="min-width: 60px;">Market Cap</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-primary table-group-divider">
+                                            <tr>
+                                                <td>{{infoStock.yearHigh | currency}}</td>
+                                                <td>{{infoStock.changeYearHigh | currency}}</td>
+                                                <td>{{infoStock.changeYearHighInPercent | currency}}</td>
+                                                <td>{{infoStock.yearLow | currency}}</td>
+                                                <td>{{infoStock.changeYearLow | currency}}</td>
+                                                <td>{{infoStock.changeYearLowInPercent | currency}}</td>
+                                                <td>{{infoStock.volume | magnitude}}</td>
+                                                <td>{{infoStock.marketCap | magnitude}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="stock-ledger">
+                                    <table class="table table-striped table-bordered table-responsive table-hover-cells" style="width: 100%;">
+                                        <thead><td [colSpan]="20" style="padding-left: 5px; font-weight: 1000;">Ledger</td></thead>
+                                        <thead>
+                                            <tr style="text-align: center;">
+                                                <th scope="col" style="width: 90px;"><a class="add-stock" (click)="onOpenModal('add')"><img src="../../../assets/add_box.svg" style="margin-left: 5px; width: 30px;"></a></th>
+                                                <th scope="col" style="width: 90px;">Date</th>
+                                                <th scope="col" style="width: 60px;">Transaction Type</th>
+                                                <th scope="col" style="width: 70px;">Share Price</th>
+                                                <th scope="col" style="width: 80px;">Number of Shares</th>
+                                                <th scope="col" style="width: 90px;">Notes</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-secondary table-group-divider">
+                                            <tr *ngFor="let ledger of infoStock.ledger">
+                                                <td style="text-align: center;">
+                                                    <a (click)="onOpenModal('edit', infoStock ,ledger)" class="btn btn-primary tooltips" 
+                                                        data-placement="top" data-original-title="Edit" style="margin: 0; scale: 0.8;">
+                                                        <i class="fa fa-pencil"></i>
+                                                    </a>
+                                                    <a (click)="onOpenModal('delete', infoStock, ledger)" class="btn btn-secondary tooltips" 
+                                                        data-placement="top" data-original-title="Delete" style="margin: 0; scale: 0.8;">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </td>
+                                                <td>{{ledger.date}}</td>
+                                                <td>{{ledger.transaction | titlecase}}</td>
+                                                <td>{{ledger.price | currency}}</td>
+                                                <td>{{ledger.shares | number: '1.1'}}</td>
+                                                <td>{{ledger.notes}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Add Ledger Modal -->
+
+
+<div class="modal fade" id="addLedgerModal" tabindex="-1" role="dialog" aria-labelledby="addLedgerModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="addLedgerModalLabel">Add Ledger</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form #addForm="ngForm" (ngSubmit)="onAddLedger(addForm)">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="text" ngModel name="email" class="form-control" id="email" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+              <label for="ticker">Stock Symbol</label>
+              <input type="text" ngModel name="ticker" class="form-control" id="ticker" placeholder="Symbol" required>
+            </div>
+            <div class="form-group">
+                <label for="transaction">Transaction Type</label>
+                <select ngModel name="transaction" class="form-control" id="transaction" label="Transaction" required>
+                    <option value="" disabled selected>Select Transaction Type</option>
+                    <option value="purchase">Purchase</option>
+                    <option value="sale">Sale</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="date">Date of Transaction</label>
+                <input type="text" ngModel name="date" class="form-control" id="date" placeholder="YYYY-MM-DD" required>
+            </div>
+            <div class="form-group">
+              <label for="price">Share Price</label>
+              <input type="text" ngModel name="price" class="form-control" id="price" placeholder="Price" required>
+            </div>
+            <div class="form-group">
+              <label for="shares">Number of Shares</label>
+              <input type="text" ngModel name="shares" class="form-control" id="shares" placeholder="Shares" required>
+            </div>
+            <div class="form-group">
+              <label for="notes">Notes</label>
+              <input type="text" ngModel name="notes" class="form-control" id="notes" placeholder="Notes" >
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="add-ledger-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary" >Add Ledger</button>
+            </div>
+            </form>
+        </div>
+    </div>
+    </div>
+</div>
+
+
+<!-- Edit Modal -->
+
+
+<div class="modal fade" id="updateLedgerModal" tabindex="-1" role="dialog"
+aria-labelledby="updateLedgerModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateLedgerModalLabel">Update Ledger {{editLedger?.ticker}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form #editForm="ngForm">
+                    <div class="form-group" style="display: none;">
+                        <label for="id">ID</label>
+                        <input type="text" ngModel name="id" class="form-control" value="{{editLedger?.id}}" readonly required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="text" ngModel name="transaction" class="form-control" value="{{editLedger?.email}}" readonly required>
+                    </div>
+                    <div class="form-group">
+                      <label for="ticker">Stock Symbol</label>
+                      <input type="text" ngModel name="transaction" class="form-control" value="{{editLedger?.ticker}}" readonly required>
+                    </div>
+                    <div class="form-group">
+                        <label for="transaction">Transaction Type</label>
+                        <select ngModel name="transaction" class="form-control" id="transaction" label="Transaction" required>
+                            <option value="{{editLedger?.transaction}}" selected>{{editLedger?.transaction | titlecase}}</option>
+                            <option *ngIf="editLedger?.transaction === 'sale'" value="purchase">Purchase</option>
+                            <option *ngIf="editLedger?.transaction === 'purchase'" value="sale">Sale</option>
+                            <option *ngIf="editLedger?.transaction === ''" value="sale">Sale</option>
+                            <option *ngIf="editLedger?.transaction === ''" value="purchase">Purchase</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Date of Transaction</label>
+                        <input type="text" ngModel name="date" class="form-control" id="date" value="{{editLedger?.date}}" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="price">Share Price</label>
+                      <input type="text" ngModel name="price" class="form-control" id="price" value="{{editLedger?.price}}" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="shares">Number of Shares</label>
+                      <input type="text" ngModel name="shares" class="form-control" id="shares" value="{{editLedger?.shares}}" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="notes">Notes</label>
+                      <input type="text" ngModel name="notes" class="form-control" id="notes" value="{{editLedger?.notes}}">
+                    </div>
+                <div class="modal-footer">
+                    <button type="button" id="" data-dismiss="modal" class="btn btn-secondary">Close</button>
+                    <button (click)="onUpdateLedger(editLedger!, editLedger!.id, editForm.value)" data-dismiss="modal" class="btn btn-primary" >Save changes</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Delete Modal -->
+
+
+<div class="modal fade" id="deleteLedgerModal" tabindex="-1" role="dialog" aria-labelledby="deleteModelLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModelLabel">Remove Ledger</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to remove ledger for transaction of {{deleteLedger?.ticker}}?</p>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button (click)="onDeleteLedger(deleteLedger!.id)" class="btn btn-danger" data-dismiss="modal">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Notification for no stocks -->
+
+
+<div *ngIf="stocks?.length == 0" class="col-lg-12 col-md-12 col-xl-12">
+    <div class="alert alert-info" role="alert">
+        <h4 class="alert-heading">NO STOCKS!</h4>
+        <p>No Stocks were found.</p>
+    </div>
+</div>
+
+  

@@ -1,0 +1,118 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "~bootstrap/dist/css/bootstrap.css";
+@import "https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css";
+
+html, body { height: 100%; }
+
+body {
+    margin: 0;
+    background: #feffea;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+.card {
+    border: none;
+    -webkit-box-shadow: 0 1px 2px 0 rgba(0,0,0,.05);
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,.05);
+    margin-bottom: 30px;
+}
+.w-60 {
+    width: 60px;
+}
+h1, h2, h3, h4, h5, h6 {
+    margin: 0 0 10px;
+    font-weight: 600;
+}
+
+.nav-link {
+    color: black;
+}
+.navbar-brand {
+    margin: 2px 20px 2px 10px;
+}
+.nav-item {
+    background-color: rgb(255, 255, 230);
+    border-radius: 0.5em;
+    display: flex;
+    padding: 10px 15px;
+    margin: 2px 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+}
+.nav-link:hover .nav-item {
+    background-color: rgb(185, 185, 138);
+}
+
+.container {
+    padding-top: 2em;
+    padding-bottom: 2em;
+}
+
+.stock-info{
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+
+.list-group-item .fa {
+    margin: 0 10px 0 0;
+}
+
+.btn-group .btn {
+    margin: 0px 5px 0 0;
+}
+
+.form-inline{
+    display: flex;
+    margin: 1px 10px;
+}
+
+.add-stock {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.info-stock {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.dropdown {
+    top: -10px;
+    left: 75px;
+    display: flex;
+    text-align: center;
+    width: fit-content;
+    height: fit-content;
+    background-color: rgb(199, 199, 199);
+    color: white;
+    padding: 4px;
+    border: none;
+    cursor: pointer;
+    border-radius: 0.5em;
+    scale: 0.7;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: calc(99%);
+    left: 0;
+    color: black;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    border-radius: 0.5em;
+    padding: 12px 16px;
+    width: 240px;
+    z-index: 101;
+}
+
+.dropdown-content-item {
+    width: 100%;
+    display: inline-flex;
+    justify-content: space-between;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}

@@ -1,0 +1,231 @@
+<div class="container" id="main-container">
+    <table class="table table-striped table-bordered table-responsive table-hover table-hover-cells" style="margin-bottom: 0;">
+        <thead><td></td><td></td><td colspan="6" style="padding-left: 15px; font-weight: 1000;">Sold Positions</td></thead>
+        <thead>
+            <tr>
+                <th scope="col" style="width: 40px;"><a class="add-stock" (click)="onOpenModal('add')"><img src="../../../assets/add_box.svg" style="margin-left: 5px; width: 30px;"></a></th>
+                <th scope="col" style="width: 35px;">#</th>
+                <th scope="col" style="width: 100px;">Symbol</th>
+                <th scope="col" style="width: 250px;">Name</th>
+                <th scope="col" style="width: 100px;">Sold Shares</th>
+                <th scope="col" style="width: 100px;">Sold Price</th>
+                <th scope="col" style="width: 100px;">Current Price</th>
+                <th scope="col" style="width: 100px;">Day Change %</th>
+                <th scope="col" style="width: 100px;">50D % Change</th>
+            </tr>
+        </thead>
+        <tbody class="table-success table-group-divider">
+            <tr *ngFor="let stock of stocks; index as i">
+                <td>
+                    <a (click)="onOpenModal('info', stock)" class="info-stock" data-placement="top" data-original-title="Info" style="scale: 0.6"><img src="../../../assets/info-icon.svg" style="margin-left: 5px; width: 30px;"></a>
+                </td>
+                <th scope="row">{{i+1}}</th>
+                <td>{{stock?.ticker}}</td>
+                <td><a href="{{stock?.url}}" target="_blank" style="text-decoration: none; cursor: pointer; color: blue;" onmouseover="this.style.color='blueviolet';" onmouseout="this.style.color='blue';">
+                    {{stock?.name}} 
+                </a></td>
+                <td>{{stock?.ownedShares | number: '1.1'}}</td>
+                <td>{{stock?.purchasePrice | currency}}</td>
+                <td>{{stock?.price | currency}}</td>
+                <td>{{stock?.changeInPercent | number: '1.2'}}</td>
+                <td>{{stock?.avgChange50InPercent | number: '1.2'}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+
+    <!-- Info Modal -->
+
+
+    <div class="modal fade" id="infoSoldStockModal" tabindex="-1" role="dialog"
+    aria-labelledby="stockInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width: 800px;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="stockInfoModalLabel">Stock {{infoStock?.ticker}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="margin-top: 15px;">
+                        <div *ngIf="infoStock">
+                            <div class="card m-b-30">
+                                <div class="card-body row">
+                                    <div class="card-title col-6" style="text-align: center;">
+                                        <h3><a href="{{infoStock.url}}" target="_blank" style="text-decoration: none; cursor: pointer; color: blue;" onmouseover="this.style.color='blueviolet';" onmouseout="this.style.color='blue';">
+                                            {{infoStock.name}} 
+                                        </a></h3>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item">{{infoStock.notes}}</li>
+                                            <li class="list-group-item"></li>
+                                        </ul>
+                                    </div>
+                                    <div class="card-title col-6" style="text-align: left;">
+                                        <h3 style="display: inline-block; margin-right: 8px;">{{infoStock.price}}$</h3>
+                                        <h5 *ngIf="infoStock.change>0" style="display: inline-block; color: green;">{{infoStock.change}}   {{infoStock.changeInPercent}}%</h5>
+                                        <h5 *ngIf="infoStock.change<0" style="display: inline-block; color: red;">{{infoStock.change}}   {{infoStock.changeInPercent}}%</h5>
+                                        <p>Sell Price: {{infoStock.purchasePrice | currency}}</p>
+                                        <p>Sold Shares: {{infoStock.ownedShares | number: '1.1'}}</p>
+                                    </div>
+                                    </div>
+                                    <div class="stock-info">
+                                        <div>
+                                            <table class="table table-striped table-bordered table-responsive table-hover-cells" style="margin-bottom: 25px; width: 100%;">
+                                                <thead><td [colSpan]="6" style="padding-left: 5px; font-weight: 1000;">{{infoStock.ticker}}</td></thead>
+                                                <thead>
+                                                    <tr style="text-align: center;">
+                                                        <th scope="col" style="width: 80px;">Day Open</th>
+                                                        <th scope="col" style="width: 80px;">Previous Close</th>
+                                                        <th scope="col" style="width: 80px;">Current Bid</th>
+                                                        <th scope="col" style="width: 80px;">Current Ask</th>
+                                                        <th scope="col" style="width: 80px;">Day High</th>
+                                                        <th scope="col" style="width: 80px;">Day Low</th>
+                                                        <th scope="col" style="width: 80px;">Avg % Change (50 D)</th>
+                                                        <th scope="col" style="width: 80px;">Avg % Change (200 D)</th>
+                                                        <th scope="col" style="width: 80px;">Annual Dividend Yield</th>
+                                                        <th scope="col" style="width: 80px;">Annual Dividend Yield %</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="table-success table-group-divider">
+                                                    <tr>
+                                                        <td>{{infoStock.open | currency}}</td>
+                                                        <td>{{infoStock.previousClose | currency}}</td>
+                                                        <td>{{infoStock.bid | currency}}</td>
+                                                        <td>{{infoStock.ask | currency}}</td>
+                                                        <td>{{infoStock.dayHigh | currency}}</td>
+                                                        <td>{{infoStock.dayLow | currency}}</td>
+                                                        <td>{{infoStock.avgChange50InPercent | number: '1.2'}}</td>
+                                                        <td>{{infoStock.avgChange200InPercent | number: '1.2'}}</td>
+                                                        <td>{{infoStock.dividendAnnualYield | number: '1.2'}}</td>
+                                                        <td>{{infoStock.dividendAnnualYieldPercent | number: '1.2'}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                    <div class="float-right btn-group btn-group-sm">
+                                        <a (click)="onOpenModal('edit', infoStock)" class="btn btn-primary tooltips" data-placement="top" data-original-title="Edit"><i class="fa fa-pencil"></i> </a>
+                                        <a (click)="onOpenModal('delete', infoStock)" class="btn btn-secondary tooltips" data-placement="top" data-original-title="Delete"><i class="fa fa-trash"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+  <!-- Add Stock Modal -->
+
+  <div class="modal fade" id="addSoldStockModal" tabindex="-1" role="dialog" aria-labelledby="addStockModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="addStockModalLabel">Sold Stock</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form #addForm="ngForm" (ngSubmit)="onAddStock(addForm)">
+            <div class="form-group">
+            <label for="ticker">Ticker</label>
+            <input type="text" ngModel name="ticker" class="form-control" id="ticker" placeholder="Ticker" required>
+            </div>
+            <div class="form-group">
+            <label for="soldPrice">Sold Price</label>
+            <input type="soldPrice" ngModel name="soldPrice" class="form-control" id="soldPrice" placeholder="Sold Price" >
+            </div>
+            <div class="form-group">
+            <label for="soldShares">Sold Shares</label>
+            <input type="text" ngModel name="soldShares" class="form-control" id="soldShares" placeholder="Sold Shares" >
+            </div>
+            <div class="form-group">
+            <label for="notes">Notes</label>
+            <input type="text" ngModel name="notes" class="form-control" id="notes" placeholder="Notes" >
+        </div>
+            <div class="modal-footer">
+            <button type="button" id="add-sold-stock-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary" >Save changes</button>
+            </div>
+            </form>
+        </div>
+    </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+
+<div class="modal fade" id="updateSoldStockModal" tabindex="-1" role="dialog"
+aria-labelledby="stockEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateStockModalLabel">Update Stock {{editStock?.ticker}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form #editForm="ngForm">
+                <div class="form-group">
+                    <label for="ticker">Ticker</label>
+                    <input type="text" ngModel="{{editStock?.ticker}}" name="ticker" class="form-control" id="ticker" placeholder="Ticker">
+                </div>
+                <div class="form-group">
+                    <label for="soldPrice">Sold Price</label>
+                    <input type="purchasoldPricesePrice" ngModel="{{editStock?.purchasePrice}}" name="soldPrice" class="form-control" id="soldPrice" placeholder="Sold Price">
+                </div>
+                <div class="form-group">
+                    <label for="soldShares">Sold Shares</label>
+                    <input type="text" ngModel="{{editStock?.ownedShares}}" name="soldShares" class="form-control" id="soldShares" placeholder="Sold Shares">
+                </div>
+                <div class="form-group">
+                    <label for="notes">Notes</label>
+                    <input type="text" ngModel="{{editStock?.notes}}" name="notes" class="form-control" id="notes" placeholder="Notes">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="" data-dismiss="modal" class="btn btn-secondary">Close</button>
+                    <button (click)="onUpdateStock(editStock!.ticker, editForm.value)" data-dismiss="modal" class="btn btn-primary" >Save changes</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+
+<div class="modal fade" id="deleteSoldStockModal" tabindex="-1" role="dialog" aria-labelledby="deleteModelLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModelLabel">Remove Stock</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to remove stock {{deleteStock?.ticker}}?</p>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button (click)="onDeleteStock(deleteStock!.ticker)" class="btn btn-danger" data-dismiss="modal">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+  
+  <!-- Notification for no stocks -->
+  <div *ngIf="stocks?.length == 0" class="col-lg-12 col-md-12 col-xl-12">
+    <div class="alert alert-info" role="alert">
+        <h4 class="alert-heading">NO STOCKS!</h4>
+        <p>No Stocks were found.</p>
+    </div>
+</div>
