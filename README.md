@@ -8,7 +8,9 @@ InvestmentIQ is an intuitive, user-friendly platform designed to help you manage
 
 ## Features
 
-The landing page provides a complete overview and summary of your portfolio. Easily compare your current positions, sold positions and other valuable information such as total money spent and total shares purchased. The platform also allows you to view a complete ledger of your transactions for each stock, including current stock data like price and day-change percentage. 
+The landing page provides a complete overview and summary of your portfolio. Easily compare your current positions, sold positions and other valuable information such as total money spent and total shares purchased. The table is dynamic allowing you to select which properties of each stock will be displayed allowing for easy comparison of stock performance.
+
+The platform also allows you to view a complete ledger of your transactions for each stock, including current stock data like price and day-change percentage. 
 
 The watchlist and browse allows you to browse stocks from Canadian and American markets, and add them to your watchlist for easy monitoring.
 
