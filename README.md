@@ -16,7 +16,7 @@ The watchlist and browse allows you to browse stocks from Canadian and American 
 
 ## Technologies
 
-HTML, CSS, TypeScript, Angular, PrimeNG, RxJS, NodeJS
+HTML, CSS, TypeScript, Angular, PrimeNG, RxJS
 
 ## Screenshots
 
